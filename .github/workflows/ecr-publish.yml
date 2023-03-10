@@ -43,7 +43,7 @@ jobs:
           if [[ $GITHUB_REF == 'refs/heads/main' ]]; then export ENVIRONMENT=stable; else export ENVIRONMENT=devel; fi;
           # echo $ENVIRONMENT
           # echo $GITHUB_REPOSITORY
-          if [[ $REPO_VISABILITY == 'private' ]]; then export IMAGE_NAME=$(echo $GITHUB_REPOSITORY | cut -d/ -f2 | sed 's/ark_/arkcase/'); else export IMAGE_NAME=$(echo $GITHUB_REPOSITORY |cut -d/ -f2 | sed 's/ark_//'); fi;
+          if [[ $REPO_VISABILITY == 'private' ]]; then export IMAGE_NAME=$(echo $GITHUB_REPOSITORY | cut -d/ -f2 | sed 's/ark_/arkcase\//'); else export IMAGE_NAME=$(echo $GITHUB_REPOSITORY |cut -d/ -f2 | sed 's/ark_//'); fi;
           # echo $IMAGE_NAME
           # echo "${ENVIRONMENT}/${IMAGE_NAME}"
           # echo "${ECR_REGISTRY}"
