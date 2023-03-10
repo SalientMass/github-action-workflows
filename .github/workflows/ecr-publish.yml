@@ -1,6 +1,17 @@
 name: ECR Dependencies and Push Images
 on:
   workflow_call:
+    secrets:
+      AWS_REGION:
+        required: true
+      AWS_ORG_ID:
+        required: true
+      AWS_ACCESS_KEY:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
+      SECRET_ACCESS_KEY:
+        required: true
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
