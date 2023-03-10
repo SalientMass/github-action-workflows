@@ -2,20 +2,20 @@ name: ECR Dependencies and Push Images
 on:
   workflow_call:
     secrets:
-      AWS_REGION:
+      ECR_AWS_REGION:
         required: true
-      AWS_ORG_ID:
+      ECR_AWS_ORG_ID:
         required: true
-      AWS_ACCESS_KEY:
+      ECR_AWS_ACCESS_KEY:
         required: true
-      AWS_ACCOUNT_ID:
+      ECR_AWS_ACCOUNT_ID:
         required: true
-      SECRET_ACCESS_KEY:
+      ECR_SECRET_ACCESS_KEY:
         required: true
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_ORG_ID: ${{ secrets.AWS_ORG_ID }}
+  ECR_AWS_REGION: ${{ secrets.ECR_AWS_REGION }}
+  ECR_AWS_ORG_ID: ${{ secrets.ECR_AWS_ORG_ID }}
 jobs:
   ECR-Publishing:
     runs-on: ubuntu-latest
@@ -26,10 +26,10 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          mask-aws-account-id: ${{ secrets.AWS_ACCOUNT_ID }}
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.ECR_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.ECR_AWS_REGION }}
+          mask-aws-account-id: ${{ secrets.ECR_AWS_ACCOUNT_ID }}
 
       - name: Public or Private Repo
         run: |
@@ -50,7 +50,7 @@ jobs:
           echo "We are creating a ${IMAGE_NAME} repository under ${ENVIRONMENT} environment. This based from your repository name and Git branch."
           echo "We try creating this even if the repo exists, so errors to that note will not create failures of the workflow."
           aws ecr create-repository \
-             --region ${AWS_REGION} \
+             --region ${ECR_AWS_REGION} \
              --repository-name ${ENVIRONMENT}/${IMAGE_NAME}  \
              --image-tag-mutability MUTABLE --image-scanning-configuration scanOnPush=true  \
              --encryption-configuration encryptionType="AES256" || true
@@ -84,7 +84,7 @@ jobs:
                 "Condition": {
                   "ForAnyValue:StringEquals": {
                     "aws:PrincipalOrgID": [
-                      "${AWS_ORG_ID}"
+                      "${ECR_AWS_ORG_ID}"
                     ]
                   }
                 }
@@ -98,7 +98,7 @@ jobs:
           source .env
           echo "${ENVIRONMENT}/${IMAGE_NAME}"
           aws ecr set-repository-policy \
-          --region ${AWS_REGION} \
+          --region ${ECR_AWS_REGION} \
           --repository-name ${ENVIRONMENT}/${IMAGE_NAME}  \
           --policy-text file://ecr_read_policy.json
 
@@ -128,7 +128,7 @@ jobs:
           source .env
           cat ecr_lifecycle_policy.json
           aws ecr put-lifecycle-policy \
-          --region ${AWS_REGION} \
+          --region ${ECR_AWS_REGION} \
           --repository-name ${ENVIRONMENT}/${IMAGE_NAME}  \
           --lifecycle-policy-text file://ecr_lifecycle_policy.json
 
